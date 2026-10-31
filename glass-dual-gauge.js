@@ -5,7 +5,7 @@
  * Single file, no build step, no dependencies.
  */
 (() => {
-  const VERSION = "1.4.1";
+  const VERSION = "1.5.0";
   const TAG = "glass-dual-gauge";
   const EDITOR_TAG = "glass-dual-gauge-editor";
   if (customElements.get(TAG)) return;
@@ -1597,6 +1597,91 @@
     }
   }
 
+
+  // ------------------------------------------------------------------ glass heading
+  // A section title made to match the gauges: an icon in a glowing chip, a title, an optional
+  // subtitle and a fading line. Unlike Home Assistant's heading card it stays readable on a
+  // dark dashboard background even when Home Assistant itself is in light mode.
+  const HEADING_TAG = "glass-heading";
+  const HEADING_STYLE = `
+    :host { display:block; height:100%; }
+    .h { height:100%; min-height: 48px; display:flex; align-items:center; gap: 12px; padding: 4px 4px 2px;
+      font-family: var(--ha-font-family-body, var(--paper-font-body1_-_font-family, "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif));
+      --fg: #f4f7ff; --dim: rgba(244,247,255,.62); }
+    .h.light { --fg: #131a33; --dim: rgba(19,26,51,.6); }
+    .chip { width: 34px; height: 34px; border-radius: 50%; flex:none; display:grid; place-items:center; color:#fff;
+      background: linear-gradient(135deg, var(--a1), var(--a2)); box-shadow: 0 0 18px -2px var(--a1), inset 0 1px 0 rgba(255,255,255,.45); }
+    .chip ha-icon { --mdc-icon-size: 19px; display:flex; }
+    .chip b { font-size: 15px; font-weight: 700; }
+    .txt { min-width:0; display:flex; flex-direction:column; gap: 1px; }
+    .t { color: var(--fg); font-size: 17px; font-weight: 600; letter-spacing: .01em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .s { color: var(--dim); font-size: 12.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .line { flex: 1; height: 1px; min-width: 16px; margin-left: 4px; background: linear-gradient(90deg, var(--a1), transparent); opacity: .55; }
+  `;
+
+  class GlassHeading extends HTMLElement {
+    static getStubConfig() {
+      return { heading: "Living room", subtitle: "Climate and air", icon: "mdi:sofa" };
+    }
+
+    static getConfigForm() {
+      return {
+        schema: [
+          { name: "heading", required: true, selector: { text: {} } },
+          { name: "subtitle", selector: { text: {} } },
+          {
+            type: "grid",
+            name: "",
+            schema: [
+              { name: "icon", selector: { icon: {} } },
+              { name: "color", selector: { text: {} } },
+              { name: "theme", selector: { select: { mode: "dropdown", options: [{ value: "auto", label: "Follow Home Assistant" }, { value: "dark", label: "Dark" }, { value: "light", label: "Light" }] } } },
+            ],
+          },
+        ],
+        computeLabel: (s) => ({ heading: "Title", subtitle: "Subtitle (optional)", icon: "Icon", color: "Accent colour (e.g. #7b8cff)", theme: "Theme" })[s.name],
+      };
+    }
+
+    setConfig(config) {
+      if (!config || !config.heading) throw new Error("Add a heading.");
+      this._config = config;
+      if (!this.shadowRoot) this.attachShadow({ mode: "open" });
+      this._render();
+    }
+
+    set hass(hass) {
+      const dark = hass && hass.themes && typeof hass.themes.darkMode === "boolean" ? hass.themes.darkMode : true;
+      if (dark !== this._dark) {
+        this._dark = dark;
+        this._render();
+      }
+    }
+
+    getCardSize() {
+      return 1;
+    }
+
+    getGridOptions() {
+      return { columns: "full", rows: 1, min_rows: 1 };
+    }
+
+    _render() {
+      const c = this._config;
+      if (!c || !this.shadowRoot) return;
+      const theme = c.theme === "dark" || c.theme === "light" ? c.theme : this._dark === false ? "light" : "dark";
+      const a1 = parseHex(c.color) ? c.color : "#7b8cff";
+      const a2 = parseHex(c.color) ? mix(c.color, "#22d3c5", 0.35) : "#22d3c5";
+      const icon = c.icon ? `<ha-icon icon="${esc(c.icon)}"></ha-icon>` : `<b>${esc(String(c.heading).trim().charAt(0).toUpperCase())}</b>`;
+      this.shadowRoot.innerHTML = `<style>${HEADING_STYLE}</style>
+        <div class="h ${theme}" style="--a1:${esc(a1)};--a2:${esc(a2)}">
+          <span class="chip">${icon}</span>
+          <span class="txt"><span class="t">${esc(c.heading)}</span>${c.subtitle ? `<span class="s">${esc(c.subtitle)}</span>` : ""}</span>
+          <span class="line"></span>
+        </div>`;
+    }
+  }
+
   customElements.define(TAG, GlassDualGauge);
   if (!customElements.get(EDITOR_TAG)) customElements.define(EDITOR_TAG, GlassDualGaugeEditor);
   window.customCards = window.customCards || [];
@@ -1606,5 +1691,14 @@
     description: "Two values on one frosted-glass gauge: an inner and an outer ring with a clear centre readout.",
     preview: true,
   });
+  if (!customElements.get(HEADING_TAG)) {
+    customElements.define(HEADING_TAG, GlassHeading);
+    window.customCards.push({
+      type: HEADING_TAG,
+      name: "Glass Heading",
+      description: "A section title with a glowing icon, made to match Glass Dual Gauge.",
+      preview: true,
+    });
+  }
   console.info(`%c GLASS DUAL GAUGE %c ${VERSION} `, "background:#5b6cff;color:#fff;border-radius:4px 0 0 4px;padding:2px 6px", "background:#22d3c5;color:#062a28;border-radius:0 4px 4px 0;padding:2px 6px");
 })();

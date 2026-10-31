@@ -4,6 +4,9 @@
 # uses `demo: true`. To use your own sensors, edit a card, remove `demo: true`
 # and pick an entity for each value.
 #
+# The cards use their dark glass look (theme: dark) to suit the dark background,
+# even when Home Assistant itself is in light mode.
+#
 # How to add it:
 #   Settings → Dashboards → + Add dashboard → New dashboard from scratch
 #   Open the new dashboard → pencil (Edit dashboard) → ⋮ → Raw configuration editor
@@ -16,16 +19,21 @@ views:
     icon: mdi:gauge
     type: sections
     max_columns: 4
-    # A deep aurora background so the glass has something to shine against.
-    background: "radial-gradient(60% 50% at 10% 0%, #3b3f9a 0%, transparent 60%) fixed, radial-gradient(50% 45% at 100% 100%, #0f6b66 0%, transparent 60%) fixed, radial-gradient(40% 40% at 80% 0%, #7a2d6b 0%, transparent 60%) fixed, #0a0d1c"
+    # The aurora wallpaper gives the frosted glass colour to blur. To use your own picture,
+    # put it in your config/www folder and change the address to /local/your-picture.jpg
+    background: "center / cover no-repeat fixed url('https://raw.githubusercontent.com/Degederon/GlassDualGauges/main/wallpapers/aurora.jpg'), #0a0d1c"
     sections:
       - type: grid
         cards:
-          - type: heading
+          - type: custom:glass-heading
             heading: Climate
+            subtitle: Temperature, humidity and air
             icon: mdi:home-thermometer
+            color: "#ff9f5c"
+            theme: dark
           - type: custom:glass-dual-gauge
             demo: true
+            theme: dark
             name: Living room
             style: rings
             gauges:
@@ -50,6 +58,7 @@ views:
                 color: "#7b8cff"
           - type: custom:glass-dual-gauge
             demo: true
+            theme: dark
             name: Inside and out
             style: butterfly
             gauges:
@@ -65,6 +74,7 @@ views:
                 color: "#6cb6ff"
           - type: custom:glass-dual-gauge
             demo: true
+            theme: dark
             name: Air quality
             style: segments
             primary: outer
@@ -90,6 +100,7 @@ views:
                     color: "#ff5c7a"
           - type: custom:glass-dual-gauge
             demo: true
+            theme: dark
             name: Thermostat
             style: needles
             gauges:
@@ -106,11 +117,15 @@ views:
 
       - type: grid
         cards:
-          - type: heading
+          - type: custom:glass-heading
             heading: Energy
+            subtitle: Solar, battery and the house
             icon: mdi:lightning-bolt
+            color: "#ffc857"
+            theme: dark
           - type: custom:glass-dual-gauge
             demo: true
+            theme: dark
             name: Solar
             style: pulse
             primary: outer
@@ -127,6 +142,7 @@ views:
                 color: "#ffc857"
           - type: custom:glass-dual-gauge
             demo: true
+            theme: dark
             name: Battery and grid
             style: rings
             arc: 240
@@ -156,6 +172,7 @@ views:
                     color: "#7b8cff"
           - type: custom:glass-dual-gauge
             demo: true
+            theme: dark
             name: Power
             style: tape
             gauges:
@@ -173,6 +190,7 @@ views:
                 color: "#7b8cff"
           - type: custom:glass-dual-gauge
             demo: true
+            theme: dark
             name: Server
             style: orbit
             gauges:
@@ -189,11 +207,15 @@ views:
 
       - type: grid
         cards:
-          - type: heading
+          - type: custom:glass-heading
             heading: Water and garden
+            subtitle: Tanks, fish and plants
             icon: mdi:water
+            color: "#6cb6ff"
+            theme: dark
           - type: custom:glass-dual-gauge
             demo: true
+            theme: dark
             name: Rain tank
             style: liquid
             gauges:
@@ -209,6 +231,7 @@ views:
                 color: "#38d6a0"
           - type: custom:glass-dual-gauge
             demo: true
+            theme: dark
             name: Aquarium
             style: capsules
             gauges:
@@ -225,6 +248,7 @@ views:
                 color: "#c86bff"
           - type: custom:glass-dual-gauge
             demo: true
+            theme: dark
             name: Garden
             style: dots
             gauges:
@@ -243,11 +267,15 @@ views:
 
       - type: grid
         cards:
-          - type: heading
+          - type: custom:glass-heading
             heading: Me and the sky
+            subtitle: Steps, sleep and the moon
             icon: mdi:weather-night
+            color: "#c86bff"
+            theme: dark
           - type: custom:glass-dual-gauge
             demo: true
+            theme: dark
             name: Today
             style: spiral
             primary: outer
@@ -266,6 +294,7 @@ views:
                 color: "#22d3c5"
           - type: custom:glass-dual-gauge
             demo: true
+            theme: dark
             name: Wellbeing
             style: bloom
             gauges:
@@ -282,6 +311,7 @@ views:
                 color: "#ff5fa2"
           - type: custom:glass-dual-gauge
             demo: true
+            theme: dark
             name: Tonight
             style: moon
             gauges:

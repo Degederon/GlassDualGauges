@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.5.0
+- New Glass Heading card (`custom:glass-heading`): section titles with a glowing icon and subtitle that stay readable on dark backgrounds, even with Home Assistant in light mode.
+- A colourful aurora wallpaper (`wallpapers/aurora.jpg`) made to show off the frosted glass.
+- Both ready-made dashboards now use the wallpaper, Glass Headings and the dark glass look, so they look the same whether Home Assistant is in light or dark mode.
+
 ## 1.4.1
 - `examples.yaml` is now a complete dashboard that works when pasted into the raw configuration editor. Every example runs in demo mode until you connect your own sensors.
 - Demo mode uses a real sensor's name and unit when the entity exists.

@@ -6,6 +6,9 @@
 # To use your own sensors on a card: change each `entity:` to one of yours, then
 # delete the line `demo: true` from that card.
 #
+# The cards use their dark glass look (theme: dark) to suit the dark background,
+# even when Home Assistant itself is in light mode.
+#
 # How to add it:
 #   Settings → Dashboards → + Add dashboard → New dashboard from scratch → Create
 #   Open the new dashboard → pencil (Edit dashboard) → ⋮ → Raw configuration editor
@@ -22,16 +25,22 @@ views:
     icon: mdi:gauge
     type: sections
     max_columns: 3
-    background: "radial-gradient(60% 50% at 10% 0%, #3b3f9a 0%, transparent 60%) fixed, radial-gradient(50% 45% at 100% 100%, #0f6b66 0%, transparent 60%) fixed, radial-gradient(40% 40% at 80% 0%, #7a2d6b 0%, transparent 60%) fixed, #0a0d1c"
+    # The aurora wallpaper gives the frosted glass colour to blur. To use your own picture,
+    # put it in your config/www folder and change the address to /local/your-picture.jpg
+    background: "center / cover no-repeat fixed url('https://raw.githubusercontent.com/Degederon/GlassDualGauges/main/wallpapers/aurora.jpg'), #0a0d1c"
     sections:
       # Gradient colours, plus zones and a marker on a full circle.
       - type: grid
         cards:
-          - type: heading
+          - type: custom:glass-heading
             heading: Colour ranges
+            subtitle: Gradients, zones and a marker
             icon: mdi:palette
+            color: "#7b8cff"
+            theme: dark
           - type: custom:glass-dual-gauge
             demo: true
+            theme: dark
             name: Office
             gauges:
             - entity: sensor.office_temperature
@@ -63,6 +72,7 @@ views:
                 color: '#6cb6ff'
           - type: custom:glass-dual-gauge
             demo: true
+            theme: dark
             name: Air quality
             arc: 360
             primary: outer
@@ -95,11 +105,15 @@ views:
       # Rings that fill from zero, and a half-circle tank with level markers.
       - type: grid
         cards:
-          - type: heading
+          - type: custom:glass-heading
             heading: Negative values and half circles
+            subtitle: Power flowing both ways, and a tank with level marks
             icon: mdi:swap-horizontal
+            color: "#22d3c5"
+            theme: dark
           - type: custom:glass-dual-gauge
             demo: true
+            theme: dark
             name: Energy
             arc: 240
             primary: outer
@@ -130,6 +144,7 @@ views:
                 color: '#7b8cff'
           - type: custom:glass-dual-gauge
             demo: true
+            theme: dark
             name: Water tank
             arc: 180
             gauges:
@@ -160,11 +175,15 @@ views:
       # Liquid, Butterfly, Spiral and Capsules with real-world settings.
       - type: grid
         cards:
-          - type: heading
+          - type: custom:glass-heading
             heading: Other styles
+            subtitle: Liquid, Butterfly, Spiral and Capsules
             icon: mdi:shape
+            color: "#ff5fa2"
+            theme: dark
           - type: custom:glass-dual-gauge
             demo: true
+            theme: dark
             name: Rain tank
             style: liquid
             gauges:
@@ -182,6 +201,7 @@ views:
               color: '#38d6a0'
           - type: custom:glass-dual-gauge
             demo: true
+            theme: dark
             name: Temperature
             style: butterfly
             gauges:
@@ -199,6 +219,7 @@ views:
               color: '#6cb6ff'
           - type: custom:glass-dual-gauge
             demo: true
+            theme: dark
             name: Today
             style: spiral
             primary: outer
@@ -218,6 +239,7 @@ views:
               color: '#22d3c5'
           - type: custom:glass-dual-gauge
             demo: true
+            theme: dark
             name: Aquarium
             style: capsules
             gauges:

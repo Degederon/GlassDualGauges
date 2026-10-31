@@ -6,7 +6,7 @@
 
 [![HACS Custom](https://img.shields.io/badge/HACS-Custom-41BDF5.svg)](https://hacs.xyz/docs/faq/custom_repositories)
 [![Home Assistant](https://img.shields.io/badge/Home%20Assistant-2024.1%2B-18BCF2.svg?logo=homeassistant&logoColor=white)](https://www.home-assistant.io/)
-[![Version](https://img.shields.io/badge/version-1.4.1-6E56CF.svg)](https://github.com/Degederon/GlassDualGauges/blob/main/CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.5.0-6E56CF.svg)](https://github.com/Degederon/GlassDualGauges/blob/main/CHANGELOG.md)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/Degederon/GlassDualGauges/blob/main/LICENSE)
 
 </div>
@@ -16,7 +16,7 @@ Beautiful design and ease of use. https://github.com/Degederon/GlassDualGauges
 Glass Dual Gauge shows two sensors on one card: temperature and humidity, CO₂ and air quality, battery and grid power, tank level and water temperature. Pick from 13 designs, from classic glowing rings to a filling bowl of liquid, a dial with two needles or a flower that blooms. Everything is set up in the dashboard editor with colour pickers and sliders, so no YAML is needed.
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/Degederon/GlassDualGauges/main/docs/images/demo-dashboard.jpg" alt="The Glass Dual Gauge demo dashboard: 14 glass gauge cards in four groups on a dark aurora background" width="100%">
+  <img src="https://raw.githubusercontent.com/Degederon/GlassDualGauges/main/docs/images/demo-dashboard.jpg" alt="The Glass Dual Gauge demo dashboard: 14 frosted-glass gauges in four groups on an aurora wallpaper" width="100%">
 </p>
 
 > **Tip:** want to see it before connecting any sensors? The [demo dashboard](#part-3-try-the-demo-dashboard) above takes two minutes to set up and runs on moving sample values.
@@ -50,6 +50,8 @@ Glass Dual Gauge shows two sensors on one card: temperature and humidity, CO₂ 
 | **Negative values** | Rings can fill from zero, for battery charge and discharge or grid import and export. |
 | **Goals you can beat** | The Spiral style keeps winding past 100%, up to twice the range. |
 | **Tap for history** | Tap any value to open that sensor's history. |
+| **Glass headings** | A matching section title card with a glowing icon and subtitle, readable on dark backgrounds even when Home Assistant is in light mode. |
+| **Aurora wallpaper** | A colourful wallpaper made for the glass, used by both ready-made dashboards. |
 | **Fits every dashboard** | Works in Sections, Masonry and Panel dashboards, on tablets and phones. |
 | **Lightweight** | One small file with no dependencies. |
 
@@ -157,7 +159,9 @@ The demo dashboard shows all 13 styles in four groups (Climate, Energy, Water an
 8. Select everything in the editor (**Ctrl + A**, Mac: **Cmd + A**), paste the demo (**Ctrl + V**, Mac: **Cmd + V**), and select **Save**.
 9. Close the editor (✕), then select **Done**.
 
-You should now see 14 glass gauges, gently changing every few seconds.
+You should now see 14 frosted-glass gauges on a colourful aurora wallpaper, gently changing every few seconds. Every value shows a number; if you see **Unavailable** everywhere, your card is older than version 1.4.0, so update it (see [Troubleshooting](#troubleshooting)).
+
+The wallpaper loads from GitHub, so the dashboard needs an internet connection the first time. To keep it on your own system, download [aurora.jpg](https://github.com/Degederon/GlassDualGauges/blob/main/wallpapers/aurora.jpg) into your `config/www` folder and change the address in the `background:` line to `/local/aurora.jpg`.
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/Degederon/GlassDualGauges/main/docs/images/demo-phone.jpg" alt="The demo dashboard on a phone" width="300">
@@ -257,6 +261,10 @@ gauges:
 
 [examples.yaml](https://github.com/Degederon/GlassDualGauges/blob/main/examples.yaml) is a second ready-made dashboard with eight example cards: colour ranges, zones and markers, values that go negative, a half circle, and the Liquid, Butterfly, Spiral and Capsules styles. Add it the same way as the demo ([Part 3](#part-3-try-the-demo-dashboard)), using a new dashboard called **Gauge examples**. Each card already names example sensors such as `sensor.office_temperature`; change them to yours and delete `demo: true` to switch a card to live values.
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/Degederon/GlassDualGauges/main/docs/images/examples-dashboard.jpg" alt="The examples dashboard: eight glass gauges in three groups" width="100%">
+</p>
+
 To copy a single example onto an existing dashboard instead, add a Glass Dual Gauge card, select **Show code editor**, and paste just that card, starting at `type: custom:glass-dual-gauge` (without the leading `- `).
 
 ### Card options
@@ -293,6 +301,21 @@ To copy a single example onto an existing dashboard instead, add a Glass Dual Ga
 | `bidirectional` | `false` | Fill from zero instead of from `min`, for values that go negative. A small line marks zero. |
 | `zones` | — | Shaded parts of the ring (see below). |
 | `markers` | — | Lines across the ring at important values (see below). |
+
+### Glass Heading card
+
+A section title that matches the gauges. Add it from the card list (search for **Glass Heading**) or in YAML:
+
+```yaml
+type: custom:glass-heading
+heading: Climate
+subtitle: Temperature, humidity and air   # optional
+icon: mdi:home-thermometer                # optional; the first letter is used without it
+color: "#ff9f5c"                          # optional accent colour
+theme: dark                               # auto (default), dark or light
+```
+
+Home Assistant's own heading card uses your theme's text colour, which can disappear against a dark wallpaper when Home Assistant is in light mode. Glass Heading with `theme: dark` always stays readable. It's included in the same file as the gauge, so there's nothing extra to install.
 
 ## Colours, zones and markers
 
@@ -351,6 +374,10 @@ markers:
 
 | Problem | Solution |
 |---|---|
+| Every value in the demo or examples says **Unavailable** | Your card is older than version 1.4.0, which added demo mode. In the Marketplace (or HACS), open **Glass Dual Gauge**, choose **⋮ → Update information**, install the update, then refresh as in [Part 2](#part-2-refresh-the-page). |
+| The section titles are invisible on the dark background | Use the **Glass Heading** card with `theme: dark` instead of Home Assistant's heading card. Both ready-made dashboards already do. |
+| The cards look pale and milky on the wallpaper | Home Assistant is in light mode, so the cards use their light look. Set `theme: dark` on each card, as the ready-made dashboards do. |
+| The wallpaper doesn't appear | It loads from GitHub. Check the internet connection, or download it to `config/www` as described in [Part 3](#part-3-try-the-demo-dashboard). |
 | **Glass Dual Gauge** isn't in the card list | Refresh the page as in [Part 2](#part-2-refresh-the-page). If it's still missing, check **Settings → Dashboards → ⋮ → Resources** for a `glass-dual-gauge.js` entry of type **JavaScript module**. |
 | A red box says **Custom element doesn't exist: glass-dual-gauge** | The browser hasn't loaded the card yet. Refresh as in [Part 2](#part-2-refresh-the-page), and check the resource as above. |
 | The pictures or text on the Marketplace page are out of date | Open **Glass Dual Gauge** in the Marketplace, open the **⋮** menu and choose **Update information**. |
@@ -359,7 +386,6 @@ markers:
 | The colour doesn't change with the value | That gauge is set to a single colour. Choose **Changes with value** in the editor, or use `colors` instead of `color` in YAML. |
 | Pasting `examples.yaml` or `demo-dashboard.yaml` gives an error | Paste it into the **Raw configuration editor** of a dashboard (see [Part 3](#part-3-try-the-demo-dashboard)), replacing everything there. It's a whole dashboard, so it doesn't go into a single card's code editor. |
 | The demo dashboard shows red error boxes | The card isn't loaded yet. Complete [Part 2](#part-2-refresh-the-page). If only the section titles fail, update Home Assistant to 2024.10 or later. |
-| The demo background is plain grey | Your theme or Home Assistant version doesn't support view backgrounds in this format. The gauges work the same; only the backdrop differs. |
 | The card is small | In a Sections dashboard, drag the card's corner to make it bigger. In other layouts, raise `size`. |
 | The visual editor says it isn't available | Use the code editor for now, and update Home Assistant to a recent version. |
 
