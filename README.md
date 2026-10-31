@@ -19,8 +19,7 @@ Glass Dual Gauge shows two sensors on one card: temperature and humidity, CO₂ 
   <img src="https://raw.githubusercontent.com/Degederon/GlassDualGauges/main/docs/images/demo-dashboard.jpg" alt="The Glass Dual Gauge demo dashboard: 14 glass gauge cards in four groups on a dark aurora background" width="100%">
 </p>
 
-> [!TIP]
-> Want to see it before connecting any sensors? The [demo dashboard](#part-3-try-the-demo-dashboard) above takes two minutes to set up and runs on moving sample values.
+> **Tip:** want to see it before connecting any sensors? The [demo dashboard](#part-3-try-the-demo-dashboard) above takes two minutes to set up and runs on moving sample values.
 
 ## Contents
 
