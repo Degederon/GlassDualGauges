@@ -1,185 +1,236 @@
-# Glass Dual Gauge examples. Each block is one card.
+# Glass Dual Gauge examples
+#
+# A complete dashboard with eight example cards. It works as soon as you paste it:
+# every card has `demo: true`, so it shows moving sample values.
+#
+# To use your own sensors on a card: change each `entity:` to one of yours, then
+# delete the line `demo: true` from that card.
+#
+# How to add it:
+#   Settings → Dashboards → + Add dashboard → New dashboard from scratch → Create
+#   Open the new dashboard → pencil (Edit dashboard) → ⋮ → Raw configuration editor
+#   Select everything, paste this file, then Save.
+#
+# To use a single example on an existing dashboard instead, add a Glass Dual Gauge
+# card, select "Show code editor", and paste just that card (starting at
+# "type: custom:glass-dual-gauge", without the leading "- ").
 
-# Room climate: temperature (inner, big) and humidity (outer)
-type: custom:glass-dual-gauge
-name: Office
-gauges:
-  - entity: sensor.office_temperature
-    name: Temperature
-    min: 0
-    max: 40
-    color_mode: gradient
-    colors:
-      - from: 0
-        color: "#6cb6ff"
-      - from: 18
-        color: "#38d6a0"
-      - from: 26
-        color: "#ffc857"
-      - from: 30
-        color: "#ff5c7a"
-  - entity: sensor.office_humidity
-    name: Humidity
-    min: 0
-    max: 100
-    colors:
-      - from: 0
-        color: "#ffc857"
-      - from: 35
-        color: "#38d6a0"
-      - from: 65
-        color: "#6cb6ff"
----
-# Air quality: full circle, CO2 on the outer ring shown large, with zones and a marker
-type: custom:glass-dual-gauge
-name: Air quality
-arc: 360
-primary: outer
-gauges:
-  - entity: sensor.air_quality_index
-    name: IAQ
-    min: 0
-    max: 300
-  - entity: sensor.co2
-    name: CO₂
-    min: 400
-    max: 2500
-    decimals: 0
-    zones:
-      - from: 400
-        to: 1000
-        color: "#38d6a0"
-      - from: 1000
-        to: 1600
-        color: "#ffc857"
-      - from: 1600
-        to: 2500
-        color: "#ff5c7a"
-    markers:
-      - value: 1000
-        label: "1000"
-        color: "#ffc857"
----
-# Energy: both rings fill from zero, so imports and exports read at a glance
-type: custom:glass-dual-gauge
-name: Energy
-arc: 240
-primary: outer
-gauges:
-  - entity: sensor.battery_power
-    name: Battery
-    min: -3000
-    max: 3000
-    bidirectional: true
-    decimals: 0
-    colors:
-      - from: -3000
-        color: "#ff9f5c"
-      - from: 0
-        color: "#38d6a0"
-  - entity: sensor.grid_power
-    name: Grid
-    min: -5000
-    max: 5000
-    bidirectional: true
-    decimals: 0
-    colors:
-      - from: -5000
-        color: "#38d6a0"
-      - from: 0
-        color: "#7b8cff"
----
-# Water tank: half circle with level markers
-type: custom:glass-dual-gauge
-name: Water tank
-arc: 180
-gauges:
-  - entity: sensor.tank_temperature
-    name: Temperature
-    min: 0
-    max: 30
-    color: "#6cb6ff"
-  - entity: sensor.tank_level
-    name: Level
-    min: 0
-    max: 3000
-    decimals: 0
-    colors:
-      - from: 0
-        color: "#ff5c7a"
-      - from: 750
-        color: "#ffc857"
-      - from: 1500
-        color: "#38d6a0"
-    markers:
-      - value: 1000
-        label: "⅓"
-      - value: 2000
-        label: "⅔"
----
-# Liquid: tank level fills the bowl, temperature on the arc
-type: custom:glass-dual-gauge
-name: Rain tank
-style: liquid
-gauges:
-  - entity: sensor.tank_level_percent
-    name: Level
-    min: 0
-    max: 100
-    color: "#6cb6ff"
-  - entity: sensor.tank_temperature
-    name: Temperature
-    min: 0
-    max: 30
-    color: "#38d6a0"
----
-# Butterfly: inside vs outside temperature
-type: custom:glass-dual-gauge
-name: Temperature
-style: butterfly
-gauges:
-  - entity: sensor.living_room_temperature
-    name: Inside
-    min: -10
-    max: 40
-    color: "#ff9f5c"
-  - entity: sensor.outdoor_temperature
-    name: Outside
-    min: -10
-    max: 40
-    color: "#6cb6ff"
----
-# Spiral: steps keep winding past the daily goal
-type: custom:glass-dual-gauge
-name: Today
-style: spiral
-primary: outer
-gauges:
-  - entity: sensor.active_minutes
-    name: Active
-    min: 0
-    max: 60
-    color: "#ffc857"
-  - entity: sensor.steps_today
-    name: Steps
-    min: 0
-    max: 10000
-    decimals: 0
-    color: "#22d3c5"
----
-# Capsules: two values with different units
-type: custom:glass-dual-gauge
-name: Aquarium
-style: capsules
-gauges:
-  - entity: sensor.aquarium_temperature
-    name: Water
-    min: 18
-    max: 32
-    color: "#38d6a0"
-  - entity: sensor.aquarium_ph
-    name: pH
-    min: 6
-    max: 9
-    decimals: 1
-    color: "#c86bff"
+title: Gauge examples
+views:
+  - title: Examples
+    path: examples
+    icon: mdi:gauge
+    type: sections
+    max_columns: 3
+    background: "radial-gradient(60% 50% at 10% 0%, #3b3f9a 0%, transparent 60%) fixed, radial-gradient(50% 45% at 100% 100%, #0f6b66 0%, transparent 60%) fixed, radial-gradient(40% 40% at 80% 0%, #7a2d6b 0%, transparent 60%) fixed, #0a0d1c"
+    sections:
+      # Gradient colours, plus zones and a marker on a full circle.
+      - type: grid
+        cards:
+          - type: heading
+            heading: Colour ranges
+            icon: mdi:palette
+          - type: custom:glass-dual-gauge
+            demo: true
+            name: Office
+            gauges:
+            - entity: sensor.office_temperature
+              name: Temperature
+              unit: "°C"
+              min: 0
+              max: 40
+              color_mode: gradient
+              colors:
+              - from: 0
+                color: '#6cb6ff'
+              - from: 18
+                color: '#38d6a0'
+              - from: 26
+                color: '#ffc857'
+              - from: 30
+                color: '#ff5c7a'
+            - entity: sensor.office_humidity
+              name: Humidity
+              unit: "%"
+              min: 0
+              max: 100
+              colors:
+              - from: 0
+                color: '#ffc857'
+              - from: 35
+                color: '#38d6a0'
+              - from: 65
+                color: '#6cb6ff'
+          - type: custom:glass-dual-gauge
+            demo: true
+            name: Air quality
+            arc: 360
+            primary: outer
+            gauges:
+            - entity: sensor.air_quality_index
+              name: IAQ
+              unit: IAQ
+              min: 0
+              max: 300
+            - entity: sensor.co2
+              name: CO₂
+              unit: ppm
+              min: 400
+              max: 2500
+              decimals: 0
+              zones:
+              - from: 400
+                to: 1000
+                color: '#38d6a0'
+              - from: 1000
+                to: 1600
+                color: '#ffc857'
+              - from: 1600
+                to: 2500
+                color: '#ff5c7a'
+              markers:
+              - value: 1000
+                label: '1000'
+                color: '#ffc857'
+      # Rings that fill from zero, and a half-circle tank with level markers.
+      - type: grid
+        cards:
+          - type: heading
+            heading: Negative values and half circles
+            icon: mdi:swap-horizontal
+          - type: custom:glass-dual-gauge
+            demo: true
+            name: Energy
+            arc: 240
+            primary: outer
+            gauges:
+            - entity: sensor.battery_power
+              name: Battery
+              unit: W
+              min: -3000
+              max: 3000
+              bidirectional: true
+              decimals: 0
+              colors:
+              - from: -3000
+                color: '#ff9f5c'
+              - from: 0
+                color: '#38d6a0'
+            - entity: sensor.grid_power
+              name: Grid
+              unit: W
+              min: -5000
+              max: 5000
+              bidirectional: true
+              decimals: 0
+              colors:
+              - from: -5000
+                color: '#38d6a0'
+              - from: 0
+                color: '#7b8cff'
+          - type: custom:glass-dual-gauge
+            demo: true
+            name: Water tank
+            arc: 180
+            gauges:
+            - entity: sensor.tank_temperature
+              name: Temperature
+              unit: "°C"
+              min: 0
+              max: 30
+              color: '#6cb6ff'
+            - entity: sensor.tank_level
+              name: Level
+              unit: L
+              min: 0
+              max: 3000
+              decimals: 0
+              colors:
+              - from: 0
+                color: '#ff5c7a'
+              - from: 750
+                color: '#ffc857'
+              - from: 1500
+                color: '#38d6a0'
+              markers:
+              - value: 1000
+                label: ⅓
+              - value: 2000
+                label: ⅔
+      # Liquid, Butterfly, Spiral and Capsules with real-world settings.
+      - type: grid
+        cards:
+          - type: heading
+            heading: Other styles
+            icon: mdi:shape
+          - type: custom:glass-dual-gauge
+            demo: true
+            name: Rain tank
+            style: liquid
+            gauges:
+            - entity: sensor.tank_level_percent
+              name: Level
+              unit: "%"
+              min: 0
+              max: 100
+              color: '#6cb6ff'
+            - entity: sensor.tank_temperature
+              name: Temperature
+              unit: "°C"
+              min: 0
+              max: 30
+              color: '#38d6a0'
+          - type: custom:glass-dual-gauge
+            demo: true
+            name: Temperature
+            style: butterfly
+            gauges:
+            - entity: sensor.living_room_temperature
+              name: Inside
+              unit: "°C"
+              min: -10
+              max: 40
+              color: '#ff9f5c'
+            - entity: sensor.outdoor_temperature
+              name: Outside
+              unit: "°C"
+              min: -10
+              max: 40
+              color: '#6cb6ff'
+          - type: custom:glass-dual-gauge
+            demo: true
+            name: Today
+            style: spiral
+            primary: outer
+            gauges:
+            - entity: sensor.active_minutes
+              name: Active
+              unit: min
+              min: 0
+              max: 60
+              color: '#ffc857'
+            - entity: sensor.steps_today
+              name: Steps
+              unit: steps
+              min: 0
+              max: 10000
+              decimals: 0
+              color: '#22d3c5'
+          - type: custom:glass-dual-gauge
+            demo: true
+            name: Aquarium
+            style: capsules
+            gauges:
+            - entity: sensor.aquarium_temperature
+              name: Water
+              unit: "°C"
+              min: 18
+              max: 32
+              color: '#38d6a0'
+            - entity: sensor.aquarium_ph
+              name: pH
+              unit: pH
+              min: 6
+              max: 9
+              decimals: 1
+              color: '#c86bff'

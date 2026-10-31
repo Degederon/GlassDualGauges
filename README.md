@@ -6,7 +6,7 @@
 
 [![HACS Custom](https://img.shields.io/badge/HACS-Custom-41BDF5.svg)](https://hacs.xyz/docs/faq/custom_repositories)
 [![Home Assistant](https://img.shields.io/badge/Home%20Assistant-2024.1%2B-18BCF2.svg?logo=homeassistant&logoColor=white)](https://www.home-assistant.io/)
-[![Version](https://img.shields.io/badge/version-1.4.0-6E56CF.svg)](https://github.com/Degederon/GlassDualGauges/blob/main/CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.4.1-6E56CF.svg)](https://github.com/Degederon/GlassDualGauges/blob/main/CHANGELOG.md)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/Degederon/GlassDualGauges/blob/main/LICENSE)
 
 </div>
@@ -255,7 +255,9 @@ gauges:
     max: 100
 ```
 
-More examples, including Liquid, Butterfly, Spiral and Capsules, are in [examples.yaml](https://github.com/Degederon/GlassDualGauges/blob/main/examples.yaml).
+[examples.yaml](https://github.com/Degederon/GlassDualGauges/blob/main/examples.yaml) is a second ready-made dashboard with eight example cards: colour ranges, zones and markers, values that go negative, a half circle, and the Liquid, Butterfly, Spiral and Capsules styles. Add it the same way as the demo ([Part 3](#part-3-try-the-demo-dashboard)), using a new dashboard called **Gauge examples**. Each card already names example sensors such as `sensor.office_temperature`; change them to yours and delete `demo: true` to switch a card to live values.
+
+To copy a single example onto an existing dashboard instead, add a Glass Dual Gauge card, select **Show code editor**, and paste just that card, starting at `type: custom:glass-dual-gauge` (without the leading `- `).
 
 ### Card options
 
@@ -355,6 +357,7 @@ markers:
 | The card still looks like the old version after an update | Refresh as in [Part 2](#part-2-refresh-the-page). |
 | A value shows **–** and **Unavailable** | The sensor itself is unavailable or not a number. Check it under **Settings → Devices & services → Entities**. |
 | The colour doesn't change with the value | That gauge is set to a single colour. Choose **Changes with value** in the editor, or use `colors` instead of `color` in YAML. |
+| Pasting `examples.yaml` or `demo-dashboard.yaml` gives an error | Paste it into the **Raw configuration editor** of a dashboard (see [Part 3](#part-3-try-the-demo-dashboard)), replacing everything there. It's a whole dashboard, so it doesn't go into a single card's code editor. |
 | The demo dashboard shows red error boxes | The card isn't loaded yet. Complete [Part 2](#part-2-refresh-the-page). If only the section titles fail, update Home Assistant to 2024.10 or later. |
 | The demo background is plain grey | Your theme or Home Assistant version doesn't support view backgrounds in this format. The gauges work the same; only the backdrop differs. |
 | The card is small | In a Sections dashboard, drag the card's corner to make it bigger. In other layouts, raise `size`. |

@@ -5,7 +5,7 @@
  * Single file, no build step, no dependencies.
  */
 (() => {
-  const VERSION = "1.4.0";
+  const VERSION = "1.4.1";
   const TAG = "glass-dual-gauge";
   const EDITOR_TAG = "glass-dual-gauge-editor";
   if (customElements.get(TAG)) return;
@@ -718,8 +718,12 @@
     // ---------------------------------------------------------------- state
     _read(g) {
       if (this._config && this._config.demo) {
+        // Sample values, but a real sensor's name and unit when the entity exists.
         const value = this._demo ? this._demo[g.ring] : null;
-        return { st: null, name: g.name || (g.ring === "inner" ? "First value" : "Second value"), unit: g.unit || "", value: value ?? null };
+        const real = g.entity && this._hass && this._hass.states[g.entity];
+        const name = g.name || (real && real.attributes.friendly_name) || (g.ring === "inner" ? "First value" : "Second value");
+        const unit = g.unit !== undefined ? g.unit : (real && real.attributes.unit_of_measurement) || "";
+        return { st: null, name, unit, value: value ?? null };
       }
       const st = this._hass && this._hass.states[g.entity];
       const name = g.name || (st && st.attributes.friendly_name) || g.entity;

@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.4.1
+- `examples.yaml` is now a complete dashboard that works when pasted into the raw configuration editor. Every example runs in demo mode until you connect your own sensors.
+- Demo mode uses a real sensor's name and unit when the entity exists.
+
 ## 1.4.0
 - Demo mode: `demo: true` shows moving sample values, so gauges work without sensors.
 - A ready-made demo dashboard (`demo-dashboard.yaml`) with all 13 styles in four groups on an aurora background.
