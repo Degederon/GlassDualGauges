@@ -5,7 +5,7 @@
  * Single file, no build step, no dependencies.
  */
 (() => {
-  const VERSION = "1.3.0";
+  const VERSION = "1.3.1";
   const TAG = "glass-dual-gauge";
   const EDITOR_TAG = "glass-dual-gauge-editor";
   if (customElements.get(TAG)) return;
@@ -154,9 +154,9 @@
 
   // ------------------------------------------------------------------ styles
   const STYLE = `
-  :host { display:block; }
+  :host { display:block; height:100%; }
   * { box-sizing: border-box; }
-  .card { position:relative; overflow:hidden; height:100%; padding: 16px 18px 18px;
+  .card { position:relative; overflow:hidden; height:100%; padding: 16px 18px 18px; display:flex; flex-direction:column;
     border-radius: var(--ha-card-border-radius, 22px); color: var(--g-fg); isolation:isolate;
     font-family: var(--ha-font-family-body, var(--paper-font-body1_-_font-family, "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif));
     --g-fg: #f4f7ff; --g-fg-rgb: 244,247,255; --g-dim: rgba(244,247,255,.62); --g-track: rgba(255,255,255,.09);
@@ -182,13 +182,14 @@
   .card.light.plain { background: var(--ha-card-background, var(--card-background-color, #ffffff)); }
   .card.light .knob { filter: drop-shadow(0 1px 2px rgba(19,26,51,.35)); }
 
-  .head { display:flex; align-items:baseline; justify-content:space-between; gap:12px; min-height: 22px; margin-bottom: 4px; }
+  .head { flex:none; display:flex; align-items:baseline; justify-content:space-between; gap:12px; min-height: 22px; margin-bottom: 4px; }
   .title { font-size: 15px; font-weight: 600; letter-spacing: .01em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .legend { display:flex; gap: 14px; font-size: 12px; color: var(--g-dim); flex-wrap: wrap; justify-content:flex-end; }
+  .legend { flex:none; display:flex; gap: 6px 14px; font-size: 12px; color: var(--g-dim); flex-wrap: wrap; justify-content:center; margin-top: 6px; }
+  .legend:empty { display:none; }
   .legend span { display:inline-flex; align-items:center; gap:6px; white-space:nowrap; }
   .legend i { width:8px; height:8px; border-radius:50%; background: var(--c, currentColor); box-shadow: 0 0 8px var(--c, transparent); }
 
-  .gauge { position:relative; width:100%; max-width: var(--g-max, 340px); margin: 0 auto; aspect-ratio: 1; container-type: inline-size; }
+  .gauge { position:relative; flex:none; width:100%; max-width: var(--g-max, 340px); margin: auto; aspect-ratio: 1; container-type: inline-size; }
   svg { position:absolute; inset:0; width:100%; height:100%; overflow: visible; }
   .track { fill:none; stroke: var(--g-track); stroke-linecap: round; }
   .zone { fill:none; stroke-linecap: butt; }
@@ -617,23 +618,58 @@
       this._update(!first);
     }
 
-    _heightRatio() {
+    /** Height of the drawing for the current style, in the 200-wide drawing units. */
+    _drawingHeight() {
       const cfg = this._config;
-      if (!cfg) return 1;
-      if (cfg.style !== "rings") return (METERS[cfg.style].h || 200) / 200;
-      return cfg.arc <= 180 ? 0.62 : 1;
+      if (!cfg) return 200;
+      if (cfg.style !== "rings") return METERS[cfg.style].h || 200;
+      // Crop the empty space below arcs that don't close at the bottom.
+      const below = cfg.arc >= 360 ? 100 : Math.max(0, -Math.cos(((cfg.arc / 2) * Math.PI) / 180)) * 92 + 24;
+      return Math.round(Math.min(200, 100 + below));
     }
 
+    // Masonry dashboards: about 50 px per unit.
     getCardSize() {
-      return Math.max(3, Math.round(6 * this._heightRatio()));
+      return Math.max(3, Math.ceil((60 + 300 * (this._drawingHeight() / 200)) / 50));
     }
 
+    // Sections dashboards: half a section wide, and tall enough for the gauge at that width
+    // (a row is 56 px plus an 8 px gap; a half-width card is about 240 px wide).
     getGridOptions() {
-      return { columns: 6, rows: Math.max(3, Math.round(5 * this._heightRatio())), min_columns: 4, min_rows: 3 };
+      const rows = Math.ceil((60 + 240 * (this._drawingHeight() / 200) + 8) / 64);
+      return { columns: 6, rows: Math.max(3, rows), min_columns: 3, min_rows: 2 };
+    }
+
+    /**
+     * When the dashboard gives the card a fixed height (sections view, grids, panel),
+     * shrink the gauge until it fits instead of clipping it. With a free height (masonry)
+     * nothing overflows, so nothing changes.
+     */
+    _fit() {
+      const card = this.shadowRoot.querySelector(".card");
+      const gauge = this.shadowRoot.querySelector(".gauge");
+      if (!card || !gauge) return;
+      gauge.style.maxWidth = "";
+      const over = card.scrollHeight - card.clientHeight;
+      if (over > 1) {
+        const width = gauge.getBoundingClientRect().width;
+        const fitted = Math.max(90, width - (over * 200) / this._drawingHeight());
+        gauge.style.maxWidth = `${Math.floor(fitted)}px`;
+      }
+    }
+
+    _observeSize() {
+      if (this._resize || typeof ResizeObserver === "undefined") return;
+      this._resize = new ResizeObserver(() => requestAnimationFrame(() => this._fit()));
+      this._resize.observe(this);
     }
 
     connectedCallback() {
       if (this._config && this._hass) this._motion();
+      if (this.shadowRoot.querySelector(".card")) {
+        this._observeSize();
+        requestAnimationFrame(() => this._fit());
+      }
     }
 
     disconnectedCallback() {
@@ -641,6 +677,8 @@
       this._anim = {};
       cancelAnimationFrame(this._motionId);
       this._motionId = null;
+      if (this._resize) this._resize.disconnect();
+      this._resize = null;
     }
 
     // ---------------------------------------------------------------- state
@@ -694,12 +732,11 @@
       const half = cfg.arc <= 180;
       const max = num(this._raw.size, 0);
       // Crop the empty space below arcs that don't close at the bottom.
-      const below = cfg.arc >= 360 ? 100 : Math.max(0, -Math.cos(((cfg.arc / 2) * Math.PI) / 180)) * 92 + 24;
-      const height = Math.round(Math.min(200, 100 + below));
+      const height = this._drawingHeight();
       this.shadowRoot.innerHTML = `
         <style>${STYLE}</style>
         <div class="card ${cfg.glass ? "glass" : "plain"}" ${max ? `style="--g-max:${max}px"` : ""}>
-          <div class="head"><div class="title"></div><div class="legend"></div></div>
+          <div class="head"><div class="title"></div></div>
           <div class="gauge ${half ? "half" : ""}" style="aspect-ratio: 200 / ${height}; --h: ${height}; --s: ${this._textScale().toFixed(3)}">
             <svg viewBox="0 0 200 ${height}" role="img" aria-label="${esc(cfg.name || "Dual gauge")}">
               <defs>
@@ -717,6 +754,7 @@
             </svg>
             <div class="center"></div>
           </div>
+          <div class="legend"></div>
         </div>`;
       this._wire();
     }
@@ -729,7 +767,7 @@
       this.shadowRoot.innerHTML = `
         <style>${STYLE}</style>
         <div class="card ${cfg.glass ? "glass" : "plain"}" ${max ? `style="--g-max:${max}px"` : ""}>
-          <div class="head"><div class="title"></div><div class="legend"></div></div>
+          <div class="head"><div class="title"></div></div>
           <div class="gauge meter-${cfg.style}" style="aspect-ratio: 200 / ${h}; --h: ${h}; --s: ${m.scale || 1}">
             <svg viewBox="0 0 200 ${h}" role="img" aria-label="${esc(cfg.name || "Dual gauge")}">
               <defs>
@@ -747,6 +785,8 @@
     }
 
     _wire() {
+      this._observeSize();
+      requestAnimationFrame(() => this._fit());
       const root = this.shadowRoot.querySelector(".card");
       root.addEventListener("click", (e) => {
         const t = e.target.closest("[data-ring]");
@@ -976,8 +1016,9 @@
       this.shadowRoot.querySelector(".title").textContent = cfg.name;
       const pColor = pr.value === null ? "transparent" : colorAt(p, pr.value);
       const half = cfg.style === "rings" && cfg.arc <= 180;
-      // On a half gauge there's no room for the second name in the centre, so it goes in the header.
-      this.shadowRoot.querySelector(".legend").innerHTML = half
+      // On a half gauge there's no room for the second name in the centre, so a small key goes under it.
+      const legend = this.shadowRoot.querySelector(".legend");
+      if (legend) legend.innerHTML = half
         ? `<span><i style="--c:${pColor}"></i>${esc(pr.name)}</span><span><i style="--c:${sColor}"></i>${esc(sr.name)}</span>`
         : "";
     }

@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.3.1
+- Fits Home Assistant's Sections dashboards: the card reports a sensible default size and shrinks the gauge to fit smaller cells instead of clipping.
+- The colour key on half-circle gauges moved below the gauge, so the title is never cut short.
+
 ## 1.3.0
 - `swap_gauges` is now `flip`.
 - Removed leftover colour and layout aliases. Use `colors`, `color_mode` and `primary`.

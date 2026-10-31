@@ -72,6 +72,8 @@ Notes:
 
 Then edit a dashboard, choose **Add card**, and pick **Glass Dual Gauge**.
 
+It works in every dashboard layout. In **Sections** dashboards it starts at half a section wide, and you can resize it freely: the gauge shrinks to fit. In **Masonry** and **Panel** dashboards it sizes itself to the width it gets.
+
 ## Quick start
 
 ```yaml
