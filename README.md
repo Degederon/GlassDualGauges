@@ -1,18 +1,20 @@
 # Glass Dual Gauge
 
+![Glass Dual Gauge: four styles on frosted glass](https://raw.githubusercontent.com/Degederon/GlassDualGauges/main/docs/images/hero.jpg)
+
 **Two values on one gauge, on a frosted-glass card for Home Assistant.**
 
 The inner ring shows one sensor and the outer ring another, with a clear readout in the middle. It's made for pairs that belong together: temperature and humidity, CO₂ and air quality, battery and grid power, tank level and temperature.
 
-![Glass Dual Gauge in dark mode](docs/images/dark.png)
+![Glass Dual Gauge in dark mode](https://raw.githubusercontent.com/Degederon/GlassDualGauges/main/docs/images/dark.jpg)
 
-![Glass Dual Gauge in light mode](docs/images/light.png)
+![Glass Dual Gauge in light mode](https://raw.githubusercontent.com/Degederon/GlassDualGauges/main/docs/images/light.jpg)
 
 ## Styles
 
 Pick from 13 designs, by tapping a thumbnail in the editor or with `style:` in YAML. All of them use the same two sensors, colour ranges and glass card, and tapping a value opens its history.
 
-![All 13 styles in dark mode](docs/images/styles-dark.png)
+![All 13 styles in dark mode](https://raw.githubusercontent.com/Degederon/GlassDualGauges/main/docs/images/styles-dark.jpg)
 
 | Style | `style:` | First value | Second value | Good for |
 |---|---|---|---|---|
@@ -36,12 +38,9 @@ Notes:
 - `arc` applies to Rings, Liquid and Segments. Ring thickness, spacing, tick marks, zones, markers and fill-from-zero apply to Rings only.
 - In Spiral, the second value keeps winding past its `max`, up to twice the range.
 
-<details>
-<summary>All styles in light mode</summary>
+### In light mode
 
-![All 13 styles in light mode](docs/images/styles-light.png)
-
-</details>
+![All 13 styles in light mode](https://raw.githubusercontent.com/Degederon/GlassDualGauges/main/docs/images/styles-light.jpg)
 
 ## Features
 
@@ -124,6 +123,8 @@ The first gauge in the list is the inner ring and the second is the outer ring. 
 | `markers` | — | Lines across the ring at important values (see below). |
 
 ## Visual editor
+
+![The style picker in the visual editor](https://raw.githubusercontent.com/Degederon/GlassDualGauges/main/docs/images/style-picker.jpg)
 
 In the dashboard editor you can set everything except zones and markers:
 
