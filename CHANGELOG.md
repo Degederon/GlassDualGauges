@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.4.0
+- Demo mode: `demo: true` shows moving sample values, so gauges work without sensors.
+- A ready-made demo dashboard (`demo-dashboard.yaml`) with all 13 styles in four groups on an aurora background.
+- Every style now takes the same default size in Sections dashboards, so cards line up in neat rows.
+- Much fuller step-by-step setup in the README, from installing to building your own dashboard.
+
 ## 1.3.1
 - Fits Home Assistant's Sections dashboards: the card reports a sensible default size and shrinks the gauge to fit smaller cells instead of clipping.
 - The colour key on half-circle gauges moved below the gauge, so the title is never cut short.

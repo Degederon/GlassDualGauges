@@ -5,7 +5,7 @@
  * Single file, no build step, no dependencies.
  */
 (() => {
-  const VERSION = "1.3.1";
+  const VERSION = "1.4.0";
   const TAG = "glass-dual-gauge";
   const EDITOR_TAG = "glass-dual-gauge-editor";
   if (customElements.get(TAG)) return;
@@ -107,9 +107,9 @@
   };
 
   // ------------------------------------------------------------------ config
-  const normaliseGauge = (g, ring) => {
+  const normaliseGauge = (g, ring, demo = false) => {
     if (!g || typeof g !== "object") throw new Error(`The ${ring} gauge needs an entity.`);
-    if (!g.entity) throw new Error(`The ${ring} gauge needs an entity.`);
+    if (!g.entity && !demo) throw new Error(`The ${ring} gauge needs an entity.`);
     const min = num(g.min, 0);
     const max = num(g.max, 100);
     if (max <= min) throw new Error(`The ${ring} gauge's max must be bigger than its min.`);
@@ -135,10 +135,12 @@
     const arc = ARCS.includes(Number(config.arc)) ? Number(config.arc) : DEFAULT_ARC;
     let primary = config.primary || "inner";
     if (primary !== "inner" && primary !== "outer") primary = "inner";
-    const inner = normaliseGauge(first, "inner");
-    const outer = normaliseGauge(second, "outer");
+    const demo = config.demo === true;
+    const inner = normaliseGauge(first, "inner", demo);
+    const outer = normaliseGauge(second, "outer", demo);
     return {
       name: config.name || "",
+      demo,
       arc,
       primary,
       geo: ringGeometry(inner.thickness, outer.thickness, config.ring_gap),
@@ -603,7 +605,10 @@
       }
       this._shown = { inner: null, outer: null };
       this._render();
-      if (this._hass) this._update(false);
+      if (this._config && this._config.demo) {
+        this._demoStart();
+        this._update(false);
+      } else if (this._hass) this._update(false);
     }
 
     set hass(hass) {
@@ -633,11 +638,11 @@
       return Math.max(3, Math.ceil((60 + 300 * (this._drawingHeight() / 200)) / 50));
     }
 
-    // Sections dashboards: half a section wide, and tall enough for the gauge at that width
-    // (a row is 56 px plus an 8 px gap; a half-width card is about 240 px wide).
+    // Sections dashboards: half a section wide and four rows tall, the same for every style
+    // so cards line up in neat rows (half-circle gauges need only three). The gauge shrinks
+    // to fit if the cell is smaller than it would like.
     getGridOptions() {
-      const rows = Math.ceil((60 + 240 * (this._drawingHeight() / 200) + 8) / 64);
-      return { columns: 6, rows: Math.max(3, rows), min_columns: 3, min_rows: 2 };
+      return { columns: 6, rows: this._drawingHeight() <= 130 ? 3 : 4, min_columns: 3, min_rows: 2 };
     }
 
     /**
@@ -658,6 +663,32 @@
       }
     }
 
+    // ---------------------------------------------------------------- demo mode
+    // With `demo: true` the card animates realistic sample values, so a dashboard can be
+    // tried before any sensors are connected. Values drift gently within each range.
+    _demoStart() {
+      clearInterval(this._demoTimer);
+      this._demoTimer = null;
+      const cfg = this._config;
+      if (!cfg || !cfg.demo) return;
+      const pick = (g, lo, hi) => g.min + (lo + Math.random() * (hi - lo)) * (g.max - g.min);
+      const top = (ring) => (cfg.style === "spiral" && ring === "outer" ? 1.55 : 0.92);
+      if (!this._demo || this._demoFor !== this._raw) {
+        this._demo = { inner: pick(cfg.inner, 0.35, 0.75), outer: pick(cfg.outer, 0.3, cfg.style === "spiral" ? 1.35 : 0.8) };
+        this._demoFor = this._raw;
+      }
+      const step = () => {
+        for (const ring of ["inner", "outer"]) {
+          const g = cfg[ring];
+          const span = g.max - g.min;
+          const next = this._demo[ring] + (Math.random() - 0.5) * 0.22 * span;
+          this._demo[ring] = clamp(next, g.min + 0.08 * span, g.min + top(ring) * span);
+        }
+        this._update(true);
+      };
+      this._demoTimer = setInterval(step, 2600 + Math.random() * 1400);
+    }
+
     _observeSize() {
       if (this._resize || typeof ResizeObserver === "undefined") return;
       this._resize = new ResizeObserver(() => requestAnimationFrame(() => this._fit()));
@@ -666,6 +697,7 @@
 
     connectedCallback() {
       if (this._config && this._hass) this._motion();
+      if (this._config && this._config.demo && !this._demoTimer) this._demoStart();
       if (this.shadowRoot.querySelector(".card")) {
         this._observeSize();
         requestAnimationFrame(() => this._fit());
@@ -679,10 +711,16 @@
       this._motionId = null;
       if (this._resize) this._resize.disconnect();
       this._resize = null;
+      clearInterval(this._demoTimer);
+      this._demoTimer = null;
     }
 
     // ---------------------------------------------------------------- state
     _read(g) {
+      if (this._config && this._config.demo) {
+        const value = this._demo ? this._demo[g.ring] : null;
+        return { st: null, name: g.name || (g.ring === "inner" ? "First value" : "Second value"), unit: g.unit || "", value: value ?? null };
+      }
       const st = this._hass && this._hass.states[g.entity];
       const name = g.name || (st && st.attributes.friendly_name) || g.entity;
       const unit = g.unit !== undefined ? g.unit : (st && st.attributes.unit_of_measurement) || "";
