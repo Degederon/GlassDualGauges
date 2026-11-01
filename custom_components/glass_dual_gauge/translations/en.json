@@ -1,0 +1,14 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Glass Dual Gauge",
+        "description": "Adds the Glass Dual Gauge and Glass Heading cards to your dashboards. The cards load automatically: edit a dashboard, select Add card and search for \"Glass\"."
+      }
+    },
+    "abort": {
+      "already_configured": "Glass Dual Gauge is already set up.",
+      "single_instance_allowed": "Glass Dual Gauge is already set up."
+    }
+  }
+}

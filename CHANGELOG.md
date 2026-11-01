@@ -1,5 +1,14 @@
 # Changelog
 
+## 2.0.0
+- Glass Dual Gauge is now an **integration** instead of a Dashboard app. It delivers the card to your dashboards and keeps it on the current version automatically, so there's no dashboard resource to add by hand.
+- An app icon for the Marketplace and **Devices & services** (Home Assistant 2026.3 or later).
+- When it starts, the integration removes old Glass Dual Gauge resources from the earlier Dashboard version or a manual copy, so the card only loads once.
+- Deleting the integration also removes its dashboard resource.
+- The card itself, its styles and the card name `custom:glass-dual-gauge` are unchanged.
+
+To move from the Dashboard version, see "Moving from the Dashboard version" in the README.
+
 ## 1.5.0
 - New Glass Heading card (`custom:glass-heading`): section titles with a glowing icon and subtitle that stay readable on dark backgrounds, even with Home Assistant in light mode.
 - A colourful aurora wallpaper (`wallpapers/aurora.jpg`) made to show off the frosted glass.

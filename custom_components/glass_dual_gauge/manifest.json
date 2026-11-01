@@ -1,0 +1,15 @@
+{
+  "domain": "glass_dual_gauge",
+  "name": "Glass Dual Gauge",
+  "after_dependencies": ["lovelace"],
+  "codeowners": [],
+  "config_flow": true,
+  "dependencies": ["frontend", "http"],
+  "documentation": "https://github.com/Degederon/GlassDualGauges",
+  "integration_type": "service",
+  "iot_class": "calculated",
+  "issue_tracker": "https://github.com/Degederon/GlassDualGauges/issues",
+  "requirements": [],
+  "single_config_entry": true,
+  "version": "2.0.0"
+}

@@ -5,7 +5,7 @@
  * Single file, no build step, no dependencies.
  */
 (() => {
-  const VERSION = "1.5.0";
+  const VERSION = "2.0.0";
   const TAG = "glass-dual-gauge";
   const EDITOR_TAG = "glass-dual-gauge-editor";
   if (customElements.get(TAG)) return;
